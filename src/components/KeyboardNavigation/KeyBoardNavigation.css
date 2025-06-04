@@ -1,0 +1,231 @@
+.skip-links {
+  position: absolute;
+  top: -1000px;
+  left: -1000px;
+  z-index: 10000;
+}
+
+.skip-link {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background-color: var(--color-primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  z-index: 10001;
+  transition: all 0.2s ease;
+}
+
+.skip-link:focus {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  clip: auto;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.keyboard-focus-indicator {
+  border: 3px solid var(--color-focus);
+  border-radius: 0.25rem;
+  background-color: transparent;
+  box-shadow: 
+    0 0 0 1px var(--color-background),
+    0 0 8px var(--color-focus);
+  animation: focusPulse 2s infinite;
+}
+
+@keyframes focusPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+.keyboard-navigation {
+  position: relative;
+}
+
+.keyboard-navigation * {
+  transition: outline 0.15s ease;
+}
+
+.keyboard-navigation *:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 0.125rem;
+}
+
+.keyboard-navigation button:focus,
+.keyboard-navigation input:focus,
+.keyboard-navigation select:focus,
+.keyboard-navigation textarea:focus,
+.keyboard-navigation a:focus {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-background);
+}
+
+.keyboard-shortcuts-help {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  max-width: 300px;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow);
+  z-index: 1000;
+}
+
+.keyboard-shortcuts-help.visible {
+  position: static;
+  clip: auto;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+
+.keyboard-shortcuts-help ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+
+.keyboard-shortcuts-help li {
+  margin: 0.25rem 0;
+  padding: 0.25rem;
+  background-color: var(--color-border);
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+}
+
+.high-contrast .skip-link {
+  background-color: var(--color-primary);
+  border: 2px solid var(--color-border);
+}
+
+.high-contrast .keyboard-focus-indicator {
+  border-width: 4px;
+  box-shadow: 
+    0 0 0 2px var(--color-background),
+    0 0 12px var(--color-focus);
+}
+
+.high-contrast .keyboard-navigation *:focus {
+  outline-width: 3px;
+  outline-offset: 3px;
+}
+
+.reduce-motion .keyboard-focus-indicator {
+  animation: none;
+  transition: none;
+}
+
+.reduce-motion .skip-link {
+  transition: none;
+}
+
+.reduce-motion .keyboard-navigation * {
+  transition: none;
+}
+
+@media (max-width: 768px) {
+  .skip-link {
+    font-size: 0.875rem;
+    padding: 0.75rem 1rem;
+  }
+  
+  .keyboard-shortcuts-help {
+    bottom: 0.5rem;
+    right: 0.5rem;
+    max-width: 250px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .skip-link {
+    top: 0.5rem;
+    left: 0.5rem;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .keyboard-shortcuts-help {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    max-width: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+}
+
+.keyboard-navigation h1:focus,
+.keyboard-navigation h2:focus,
+.keyboard-navigation h3:focus,
+.keyboard-navigation h4:focus,
+.keyboard-navigation h5:focus,
+.keyboard-navigation h6:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  background-color: rgba(40, 167, 69, 0.1);
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+}
+
+.keyboard-navigation [role="main"]:focus,
+.keyboard-navigation [role="navigation"]:focus,
+.keyboard-navigation [role="banner"]:focus,
+.keyboard-navigation [role="contentinfo"]:focus,
+.keyboard-navigation [role="complementary"]:focus,
+.keyboard-navigation main:focus,
+.keyboard-navigation nav:focus,
+.keyboard-navigation header:focus,
+.keyboard-navigation footer:focus,
+.keyboard-navigation aside:focus {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 4px;
+  background-color: rgba(40, 167, 69, 0.05);
+}
+
+.keyboard-navigation a:focus::before {
+  content: "🔗 ";
+  position: absolute;
+  left: -1.5rem;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+}
+
+.keyboard-navigation button:focus::before {
+  content: "🔘 ";
+  position: absolute;
+  left: -1.5rem;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+}
+
+.keyboard-navigation input:focus::before,
+.keyboard-navigation select:focus::before,
+.keyboard-navigation textarea:focus::before {
+  content: "📝 ";
+  position: absolute;
+  left: -1.5rem;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+}
