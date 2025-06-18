@@ -1,46 +1,72 @@
-# Getting Started with Create React App
+Portal de Acessibilidade Digital
+Este projeto é um portal de demonstração interativo focado em acessibilidade digital. Ele permite ativar e testar diversos recursos de acessibilidade web, como leitor de tela, intérprete de Libras, alto contraste, navegação por teclado e fontes para dislexia, para entender como eles beneficiam diferentes usuários.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+Recursos Implementados
+O portal oferece uma série de funcionalidades para tornar a experiência de navegação mais inclusiva:
 
-In the project directory, you can run:
+Leitor de Tela: Converte texto selecionado em áudio. As configurações avançadas permitem ajustar velocidade e volume da fala, e ativar a reprodução automática.
+Intérprete de Libras: Traduz o texto selecionado na área de demonstração para a Língua Brasileira de Sinais (Libras), exibindo um avatar.
+Alto Contraste: Aplica filtros visuais para aumentar o contraste dos elementos da página, facilitando a leitura para pessoas com baixa visão.
+Navegação por Teclado: Garante que todos os elementos interativos sejam acessíveis e navegáveis usando apenas o teclado (teclas Tab, Enter, Escape).
+Fonte para Dislexia: Altera a fonte do texto para uma tipografia especialmente projetada para auxiliar pessoas com dislexia na leitura.
+Guia de Leitura: Destaca a linha de texto onde o cursor está posicionado, ajudando no acompanhamento visual da leitura.
+Feedback Audível (Announcer): Fornece anúncios em tempo real sobre ações e mudanças no estado da aplicação, ideal para usuários de leitores de tela.
+Skip-to-Content (Pular para o Conteúdo): Permite que usuários de teclado pulem diretamente para o conteúdo principal, evitando a navegação repetitiva por menus.
+Modal Acessível: Modais de informação que são controláveis por teclado e anunciam seu estado para tecnologias assistivas.
+Gestão de Preferências: Utiliza um contexto global (A11yContext e ThemeContext) para gerenciar as preferências de acessibilidade e tema, persistindo as escolhas do usuário.
+Tecnologias Utilizadas
+React: Biblioteca JavaScript para construção de interfaces de usuário.
+HTML & CSS (inline): Estruturação e estilização dos componentes.
+JavaScript (ES6+): Lógica da aplicação.
+ESLint (eslint-plugin-jsx-a11y): Ferramenta de linting para garantir boas práticas de acessibilidade no código JSX.
+Como Rodar o Projeto
+Siga os passos abaixo para configurar e rodar o projeto em sua máquina local.
 
-### `npm start`
+Pré-requisitos
+Certifique-se de ter o Node.js e o npm (ou Yarn) instalados em seu sistema.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Node.js (versão LTS recomendada)
+npm (gerenciador de pacotes do Node.js, vem com o Node.js)
+Instalação
+Clone o repositório:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Bash
 
-### `npm test`
+git clone <https://github.com/joanealves/accessible-react-app>
+cd accessible-react-app
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Instale as dependências:
 
-### `npm run build`
+Bash
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+npm install
+# ou
+yarn install
+Executando a Aplicação
+Após a instalação das dependências, você pode iniciar o servidor de desenvolvimento:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Bash
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+npm start
+# ou
+yarn start
+Isso abrirá a aplicação em seu navegador padrão em http://localhost:3000 (ou outra porta disponível).
 
-### `npm run eject`
+Acessibilidade e Boas Práticas
+Este projeto visa demonstrar a importância da acessibilidade digital. Ele incorpora e adere a diversas diretrizes das WCAG (Web Content Accessibility Guidelines), focando nos quatro princípios fundamentais:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Perceptível: Informações e componentes de UI apresentados de maneira que possam ser percebidos por todos os usuários.
+Operável: Componentes de UI e navegação devem ser operáveis por diferentes métodos (mouse, teclado).
+Compreensível: Informações e a operação da interface do usuário devem ser compreensíveis.
+Robusto: Conteúdo deve ser robusto o suficiente para ser interpretado por uma ampla variedade de agentes de usuário, incluindo tecnologias assistivas.
+O uso do ESLint com eslint-plugin-jsx-a11y ajuda a identificar e corrigir problemas comuns de acessibilidade durante o desenvolvimento.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Contribuindo
+Contribuições são bem-vindas! Se você tiver sugestões de melhorias, detecção de bugs ou novas funcionalidades, sinta-se à vontade para:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Abrir uma Issue descrevendo o problema ou a sugestão.
+Criar um Pull Request com suas alterações, explicando o que foi modificado e porquê.
+Licença
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
