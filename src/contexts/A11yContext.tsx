@@ -1,13 +1,6 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-  ReactNode,
-} from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
-interface A11yPreferences {
+export interface A11yPreferences {
   reducedMotion: boolean;
   highContrast: boolean;
   fontSize: 'small' | 'medium' | 'large' | 'extra-large';
@@ -15,16 +8,59 @@ interface A11yPreferences {
   libras: boolean;
   keyboardNavigation: boolean;
   screenReader: boolean;
+  magnifier: boolean;
+  magnificationLevel: number;
+  readingGuide: boolean;
+  focusIndicator: boolean;
+  colorBlindness: 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia';
+  dyslexiaFont: boolean;
+  speechRate: number;
+  speechVolume: number;
+  autoPlay: boolean;
 }
+
+const defaultPreferences: A11yPreferences = {
+  reducedMotion: false,
+  highContrast: false,
+  fontSize: 'medium',
+  announcements: true,
+  libras: false,
+  keyboardNavigation: true,
+  screenReader: false,
+  magnifier: false,
+  magnificationLevel: 2,
+  readingGuide: false,
+  focusIndicator: true,
+  colorBlindness: 'none',
+  dyslexiaFont: false,
+  speechRate: 1,
+  speechVolume: 0.8,
+  autoPlay: false
+};
+
+const fontSizeMap = {
+  'small': 14,
+  'medium': 16,
+  'large': 20,
+  'extra-large': 24
+};
 
 interface A11yContextType {
   preferences: A11yPreferences;
-  updatePreferences: (preferences: Partial<A11yPreferences>) => void;
+  updatePreferences: (prefs: Partial<A11yPreferences>) => void;
   announce: (message: string, priority?: 'polite' | 'assertive') => void;
-  isScreenReaderActive: boolean;
+  getFontSize: () => number;
 }
 
-const A11yContext = createContext<A11yContextType | undefined>(undefined);
+const A11yContext = createContext<A11yContextType | null>(null);
+
+export const useA11y = () => {
+  const context = useContext(A11yContext);
+  if (!context) {
+    throw new Error('useA11y must be used within A11yProvider');
+  }
+  return context;
+};
 
 interface A11yProviderProps {
   children: ReactNode;
@@ -32,86 +68,32 @@ interface A11yProviderProps {
 
 export const A11yProvider: React.FC<A11yProviderProps> = ({ children }) => {
   const [preferences, setPreferences] = useState<A11yPreferences>(() => {
-    const defaultPrefs: A11yPreferences = {
-      reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-      highContrast: false,
-      fontSize: 'medium',
-      announcements: true,
-      libras: false,
-      keyboardNavigation: true,
-      screenReader: false,
-    };
-
-    if (typeof window === 'undefined') return defaultPrefs;
-
-    const isProduction = process.env.NODE_ENV === 'production';
-    let saved = null;
-
-    try {
-      saved = localStorage.getItem('a11y-preferences');
-    } catch (e) {
-      console.warn('localStorage não disponível');
-    }
-
-    if (saved) {
+    // Tentar carregar preferências do localStorage se disponível
+    if (typeof window !== 'undefined') {
       try {
-        const parsed = JSON.parse(saved);
-        return { ...defaultPrefs, ...parsed };
+        const saved = localStorage.getItem('a11y-preferences');
+        return saved ? { ...defaultPreferences, ...JSON.parse(saved) } : defaultPreferences;
       } catch {
-        return defaultPrefs;
+        return defaultPreferences;
       }
     }
-
-    return defaultPrefs;
+    return defaultPreferences;
   });
-
+  
   const [announcer, setAnnouncer] = useState<HTMLElement | null>(null);
-  const [isScreenReaderActive, setIsScreenReaderActive] = useState(false);
 
-  useEffect(() => {
-    const detectScreenReader = () => {
-      const hasLiveRegion = !!document.querySelector('[aria-live]');
-      const isKnownSR = /NVDA|JAWS|VoiceOver|Talkback/i.test(navigator.userAgent);
-
-      setIsScreenReaderActive(isKnownSR || hasLiveRegion);
-
-      if (isKnownSR || hasLiveRegion) {
-        setPreferences((prev) => ({
-          ...prev,
-          announcements: true,
-          screenReader: true,
-        }));
-      }
-    };
-
-    detectScreenReader();
-
-    const handleFocusIn = () => {
-      setIsScreenReaderActive(true);
-    };
-
-    document.addEventListener('focusin', handleFocusIn);
-
-    return () => {
-      document.removeEventListener('focusin', handleFocusIn);
-    };
-  }, []);
-
+  // Criar elemento para anúncios de screen reader
   useEffect(() => {
     const announcerElement = document.createElement('div');
     announcerElement.setAttribute('aria-live', 'polite');
     announcerElement.setAttribute('aria-atomic', 'true');
-    announcerElement.setAttribute('id', 'a11y-announcer');
     announcerElement.style.cssText = `
       position: absolute !important;
       left: -10000px !important;
       width: 1px !important;
       height: 1px !important;
       overflow: hidden !important;
-      clip: rect(1px, 1px, 1px, 1px) !important;
-      white-space: nowrap !important;
     `;
-
     document.body.appendChild(announcerElement);
     setAnnouncer(announcerElement);
 
@@ -123,87 +105,85 @@ export const A11yProvider: React.FC<A11yProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const isProduction = process.env.NODE_ENV === 'production';
-    if (!isProduction && typeof localStorage !== 'undefined') {
+    if (typeof window !== 'undefined') {
       try {
         localStorage.setItem('a11y-preferences', JSON.stringify(preferences));
-      } catch (e) {
-        console.warn('Não foi possível salvar preferências');
+      } catch (error) {
+        console.warn('Não foi possível salvar as preferências de acessibilidade:', error);
       }
-    }
-
-    const root = document.documentElement;
-
-    root.classList.toggle('reduce-motion', preferences.reducedMotion);
-    root.classList.toggle('high-contrast', preferences.highContrast);
-    root.classList.toggle('keyboard-navigation', preferences.keyboardNavigation);
-    root.classList.toggle('screen-reader-active', preferences.screenReader);
-
-    root.setAttribute('data-font-size', preferences.fontSize);
-    root.setAttribute('data-libras-enabled', String(preferences.libras));
-    root.setAttribute('data-announcements-enabled', String(preferences.announcements));
-
-    const fontSizeMap = {
-      small: '14px',
-      medium: '16px',
-      large: '18px',
-      'extra-large': '20px',
-    };
-
-    root.style.setProperty('--base-font-size', fontSizeMap[preferences.fontSize]);
-    root.style.setProperty(
-      '--font-scale',
-      preferences.fontSize === 'small'
-        ? '0.875'
-        : preferences.fontSize === 'large'
-        ? '1.125'
-        : preferences.fontSize === 'extra-large'
-        ? '1.25'
-        : '1'
-    );
-
-    if (preferences.highContrast) {
-      root.style.setProperty('--color-background', '#000000');
-      root.style.setProperty('--color-text', '#ffffff');
-      root.style.setProperty('--color-primary', '#ffff00');
-      root.style.setProperty('--color-focus', '#ff00ff');
-    } else {
-      root.style.removeProperty('--color-background');
-      root.style.removeProperty('--color-text');
-      root.style.removeProperty('--color-primary');
-      root.style.removeProperty('--color-focus');
     }
   }, [preferences]);
 
+  useEffect(() => {
+    const body = document.body;
+    
+    // Movimento reduzido
+    if (preferences.reducedMotion) {
+      body.classList.add('reduce-motion');
+    } else {
+      body.classList.remove('reduce-motion');
+    }
+
+    // Alto contraste
+    if (preferences.highContrast) {
+      body.classList.add('high-contrast');
+    } else {
+      body.classList.remove('high-contrast');
+    }
+
+    // Fonte para dislexia
+    if (preferences.dyslexiaFont) {
+      body.classList.add('dyslexia-font');
+    } else {
+      body.classList.remove('dyslexia-font');
+    }
+
+    // Daltonismo
+    body.classList.remove('protanopia', 'deuteranopia', 'tritanopia');
+    if (preferences.colorBlindness !== 'none') {
+      body.classList.add(preferences.colorBlindness);
+    }
+
+    // Indicador de foco aprimorado
+    if (preferences.focusIndicator) {
+      body.classList.add('enhanced-focus');
+    } else {
+      body.classList.remove('enhanced-focus');
+    }
+
+  }, [preferences]);
+
   const updatePreferences = useCallback((newPrefs: Partial<A11yPreferences>) => {
-    setPreferences((prev) => ({ ...prev, ...newPrefs }));
+    setPreferences(prev => ({ ...prev, ...newPrefs }));
   }, []);
 
   const announce = useCallback((message: string, priority: 'polite' | 'assertive' = 'polite') => {
     if (!preferences.announcements || !announcer) return;
-
+    
     announcer.setAttribute('aria-live', priority);
     announcer.textContent = message;
-
+    
     setTimeout(() => {
-      announcer.textContent = '';
+      if (announcer) {
+        announcer.textContent = '';
+      }
     }, 3000);
   }, [preferences.announcements, announcer]);
 
-  const value = {
+  const getFontSize = useCallback(() => {
+    return fontSizeMap[preferences.fontSize];
+  }, [preferences.fontSize]);
+
+  const value: A11yContextType = {
     preferences,
     updatePreferences,
     announce,
-    isScreenReaderActive,
+    getFontSize
   };
 
-  return <A11yContext.Provider value={value}>{children}</A11yContext.Provider>;
-};
-
-export const useA11y = () => {
-  const context = useContext(A11yContext);
-  if (context === undefined) {
-    throw new Error('useA11y must be used within an A11yProvider');
-  }
-  return context;
+  return (
+    <A11yContext.Provider value={value}>
+      {children}
+    </A11yContext.Provider>
+  );
 };

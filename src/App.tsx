@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { A11yProvider, useA11y } from './contexts/A11yContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { SkipToContent } from './components/SkipToContent/SkipToContent';
+import  SkipToContent  from './components/SkipToContent/SkipToContent';
 import KeyboardNavigation from './components/KeyboardNavigation/KeyBoardNavigation';
 import LibrasInterpreter from './components/Libras/LibrasInterpreter';
 import SpeechReader from './components/Speech/SpeechReader';

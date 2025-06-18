@@ -1,0 +1,31 @@
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  background: var(--color-primary);
+  color: var(--color-background);
+  padding: 12px 20px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 10000;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  font-family: inherit;
+  white-space: nowrap; 
+}
+
+.skip-to-content:focus {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: auto;
+  height: auto;
+  border: 2px solid var(--color-focus);
+  outline: 2px solid var(--color-background); 
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--color-background); 
+}
